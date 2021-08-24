@@ -15,7 +15,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(buildPath + '/index.html'));
 });
 
-//app.use(cors());
+// app.use(cors());
 app.use(express.urlencoded());
 app.use(express.json());
 

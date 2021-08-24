@@ -174,7 +174,7 @@ const CheckInPage = () => {
             <DataGrid
               rows={studentBooks}
               columns={bookColumnNames}
-              rowHeight={studentBooks.length > 6 ? 30 : 50}
+              rowHeight={studentBooks.length > 5 ? 40 : 55}
               hideFooterPagination
               hideFooter
               headerHeight={40}
@@ -232,6 +232,7 @@ const CheckInPage = () => {
         onClose={handleCloseModal}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
+        disableAutoFocus={true}
         sx={{
           display: "flex",
           alignItems: "center",

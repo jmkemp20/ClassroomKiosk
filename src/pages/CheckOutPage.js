@@ -168,6 +168,7 @@ const CheckOutPage = () => {
         onClose={handleCloseModal}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
+        disableAutoFocus={true}
         sx={{
           display: "flex",
           alignItems: "center",

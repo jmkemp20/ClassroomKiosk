@@ -88,10 +88,10 @@ const Dashboard = () => {
           <DataGrid
             rows={studentList}
             columns={studentColumnNames}
-            rowHeight={30}
+            rowHeight={40}
             hideFooterPagination
             hideFooter
-            headerHeight={40}
+            headerHeight={50}
             onRowClick={(selectedRow) => handleRowSelection(selectedRow)}
           />
         </Box>

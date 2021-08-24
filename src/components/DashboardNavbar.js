@@ -49,6 +49,7 @@ const DashboardNavbar = (rest) => {
         onClose={handleCloseModal}
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
+        disableAutoFocus={true}
         sx={{
           display: "flex",
           alignItems: "center",
@@ -58,8 +59,7 @@ const DashboardNavbar = (rest) => {
         <Box
           sx={{
             display: "flex",
-            justifyContent: "center",
-            pt: 3,
+            justifyContent: "center"
           }}
         >
           <Card>
