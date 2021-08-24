@@ -37,7 +37,7 @@ const DashboardNavbar = (rest) => {
             <Logo />
           </RouterLink>
           <Box sx={{ flexGrow: 1 }} />
-          <Tooltip title="Logout">
+          <Tooltip title="Info">
             <IconButton color="inherit" onClick={handleOpenModal}>
               <InfoOutlinedIcon />
             </IconButton>
