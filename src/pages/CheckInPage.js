@@ -127,13 +127,6 @@ const CheckInPage = () => {
         }}
       >
         <Card>
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h4">
-              Please choose the book you wish to check in followed by check
-              in...
-            </Typography>
-          </Box>
-          <Divider />
           <CardContent>
             <Box sx={{ p: 1 }}>
               <Typography variant="h5">
@@ -151,7 +144,7 @@ const CheckInPage = () => {
                 <CircularProgress />
               </Box>
             ) : (
-              <Box style={{ height: 400, width: "100%" }}>
+              <Box style={{ height: 300, width: "100%" }}>
                 <Box style={{ display: "flex", height: "100%" }}>
                   <Box sx={{ flexGrow: 1 }}>
                     <DataGrid

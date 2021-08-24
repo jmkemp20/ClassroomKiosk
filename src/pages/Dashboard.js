@@ -82,12 +82,6 @@ const Dashboard = () => {
         }}
       >
         <Card>
-          <Box sx={{ p: 3 }}>
-            <Typography variant="h4">
-              Please choose your name, followed by check in or check out...
-            </Typography>
-          </Box>
-          <Divider />
           <CardContent>
             {isLoading ? (
               <Box
@@ -100,7 +94,7 @@ const Dashboard = () => {
                 <CircularProgress />
               </Box>
             ) : (
-              <Box style={{ height: 400, width: "100%" }}>
+              <Box style={{ height: 300, width: "100%" }}>
                 <Box style={{ display: "flex", height: "100%" }}>
                   <Box sx={{ flexGrow: 1 }}>
                     <DataGrid
