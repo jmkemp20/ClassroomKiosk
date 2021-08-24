@@ -4,20 +4,18 @@ const { Book } = require("./models/book-model");
 const { Student } = require("./models/student-model");
 const ISBNConverter = require("simple-isbn").isbn;
 const ISBNValidator = require("./utils/ISBNValidate");
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 5000;
 const app = express();
-const cors = require("cors");
-/*
-const path = require('path');
+//const cors = require("cors");
 
+const path = require('path');
 const buildPath = path.join(__dirname, '..', 'build');
 app.use(express.static(buildPath));
-
 app.get('*', (req, res) => {
   res.sendFile(path.join(buildPath + '/index.html'));
 });
-*/
-app.use(cors());
+
+//app.use(cors());
 app.use(express.urlencoded());
 app.use(express.json());
 
