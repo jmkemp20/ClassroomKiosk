@@ -3,12 +3,12 @@ function getBookListLength(params) {
 }
 
 const studentColumnNames = [
-  { field: "name", headerName: "Name", width: 200 },
-  { field: "classroom", headerName: "Class", width: 150 },
+  { field: "name", headerName: "Name", width: 325 },
+  { field: "classroom", headerName: "Class", width: 200 },
   {
     field: "current_books",
-    headerName: "Current Books Checked Out",
-    width: 280,
+    headerName: "Books Checked Out",
+    width: 225,
     valueGetter: getBookListLength,
   },
 ];
