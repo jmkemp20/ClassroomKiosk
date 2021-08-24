@@ -19,10 +19,12 @@
     "react-scripts": "4.0.3"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start-client": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "start": "cd server && npm run start",
+    "dev": "react-scripts start && (cd server && npm run dev)"
   },
   "proxy": "http://localhost:5001",
   "eslintConfig": {
