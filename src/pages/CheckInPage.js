@@ -3,11 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 import {
-  Container,
   Card,
-  Typography,
-  Divider,
-  CardContent,
   Box,
   CircularProgress,
   Button,
@@ -16,9 +12,13 @@ import {
   DialogActions,
   DialogContent,
   DialogContentText,
-  DialogTitle
+  DialogTitle,
+  Modal,
+  Snackbar,
 } from "@material-ui/core";
 import bookColumnNames from "../utils/bookColumnNames";
+import IconButton from "@material-ui/core/IconButton";
+import CloseIcon from "@material-ui/icons/Close";
 
 const CheckInPage = () => {
   const navigate = useNavigate();
@@ -26,10 +26,24 @@ const CheckInPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRow, setSelectedRow] = useState();
   const [open, setOpen] = useState(false);
-  const confirmationISBN = useRef('');
+  const confirmationISBN = useRef("");
+  const [openLoading, setOpenLoading] = useState(false);
+  const [openSnackBar, setOpenSnackBar] = useState(false);
+  const [snackBarText, setSnackBarText] = useState("");
+
+  const handleCloseSnackBar = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setOpenSnackBar(false);
+  };
 
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleCloseModal = () => {
+    setOpenLoading(false);
   };
 
   useEffect(() => {
@@ -79,12 +93,15 @@ const CheckInPage = () => {
   };
 
   const checkInHandler = () => {
-    if (selectedRow !== undefined)
-      setOpen(true);
-  }
+    if (selectedRow !== undefined) setOpen(true);
+  };
 
   const finalCheckIn = () => {
-    if (confirmationISBN.current.value === selectedRow.isbn13 || confirmationISBN.current.value === selectedRow.isbn10) {
+    if (
+      confirmationISBN.current.value === selectedRow.isbn13 ||
+      confirmationISBN.current.value === selectedRow.isbn10
+    ) {
+      setOpenLoading(true);
       const selectedStudent = JSON.parse(
         sessionStorage.getItem("selectedStudent")
       );
@@ -93,95 +110,104 @@ const CheckInPage = () => {
         body: JSON.stringify({
           userId: selectedStudent.parent_id,
           studentId: selectedStudent._id,
-          bookId: selectedRow._id
+          bookId: selectedRow._id,
         }),
         headers: {
           "Content-Type": "application/json",
         },
-      })
-        .then((res) => {
-          if (res.ok) {
-            res.json()
-              .then((data) => {
+      }).then((res) => {
+        if (res.ok) {
+          res.json().then((data) => {
+            if (studentBooks.includes(selectedRow)) {
+              setOpen(false);
+              const removalIndex = studentBooks.indexOf(selectedRow);
+              const tempStudentBooks = [...studentBooks];
+              tempStudentBooks.splice(removalIndex, 1);
+              setStudentBooks(tempStudentBooks);
+              setOpenLoading(false);
+              setSnackBarText(data.message);
+              setOpenSnackBar(true);
+              if (tempStudentBooks.length === 0) {
                 navigate("/app/dashboard", { replace: true });
-              });
-          } else {
-            confirmationISBN.current.value = '';
-          }
-        });
+              }
+            } else {
+              setOpen(false);
+              setOpenLoading(false);
+              navigate("/app/dashboard", { replace: true });
+            }
+          });
+        } else {
+          setOpenLoading(false);
+          setSnackBarText("Unable to Checkin");
+          setOpenSnackBar(true);
+          confirmationISBN.current?.focus();
+          confirmationISBN.current.value = "";
+        }
+      });
     } else {
-      confirmationISBN.current.value = '';
+      setSnackBarText("Incorrect Book or Barcode");
+      setOpenSnackBar(true);
+      confirmationISBN.current?.focus();
+      confirmationISBN.current.value = "";
     }
-  }
+  };
 
   return (
     <>
       <Helmet>
         <title>CheckIn | ClassroomLib</title>
       </Helmet>
-      <Container
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          height: "100%",
-        }}
-      >
-        <Card>
-          <CardContent>
-            <Box sx={{ p: 1 }}>
-              <Typography variant="h5">
-                {`${ JSON.parse(sessionStorage.getItem("selectedStudent")).name}'s Books`}
-              </Typography>
-            </Box>
-            {isLoading ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  pt: 3,
-                }}
-              >
-                <CircularProgress />
-              </Box>
-            ) : (
-              <Box style={{ height: 300, width: "100%" }}>
-                <Box style={{ display: "flex", height: "100%" }}>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <DataGrid
-                      rows={studentBooks}
-                      columns={bookColumnNames}
-                      onRowClick={(selectedRow) =>
-                        handleRowSelection(selectedRow)
-                      }
-                    />
-                  </Box>
-                </Box>
-              </Box>
-            )}
-          </CardContent>
-          <Divider />
+
+      <Card>
+        {isLoading ? (
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end",
-              p: 2,
+              justifyContent: "center",
+              pt: 3,
             }}
           >
-            <Button
-              color="primary"
-              fullWidth
-              size="large"
-              type="submit"
-              variant="contained"
-              onClick={checkInHandler}
-            >
-              Check In
-            </Button>
+            <CircularProgress />
           </Box>
-        </Card>
-      </Container>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">{`Check In: ${selectedRow !== undefined ? selectedRow.title : ''}`}</DialogTitle>
+        ) : (
+          <Box style={{ height: 370, width: "100%" }}>
+            <DataGrid
+              rows={studentBooks}
+              columns={bookColumnNames}
+              rowHeight={studentBooks.length > 6 ? 30 : 50}
+              hideFooterPagination
+              hideFooter
+              headerHeight={40}
+              onRowClick={(selectedRow) => handleRowSelection(selectedRow)}
+            />
+          </Box>
+        )}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+          }}
+        >
+          <Button
+            color="primary"
+            fullWidth
+            size="large"
+            type="submit"
+            variant="contained"
+            onClick={checkInHandler}
+          >
+            Check In
+          </Button>
+        </Box>
+      </Card>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="form-dialog-title"
+      >
+        <DialogTitle id="form-dialog-title">{`Check In: ${
+          selectedRow !== undefined ? selectedRow.title : ""
+        }`}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Please scan the barcode to complete check in...
@@ -201,6 +227,47 @@ const CheckInPage = () => {
           </Button>
         </DialogActions>
       </Dialog>
+      <Modal
+        open={openLoading}
+        onClose={handleCloseModal}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            pt: 3,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      </Modal>
+      <Snackbar
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+        open={openSnackBar}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackBar}
+        message={snackBarText}
+        action={
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleCloseSnackBar}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        }
+      />
     </>
   );
 };

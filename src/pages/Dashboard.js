@@ -3,14 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { DataGrid } from "@material-ui/data-grid";
 import {
-  Container,
-  Card,
   Divider,
-  CardContent,
   Box,
   CircularProgress,
-  Button,
-  Typography,
+  Button
 } from "@material-ui/core";
 import linkUserId from "../utils/linkUserId";
 import studentColumnNames from "../utils/studentColumnNames";
@@ -57,14 +53,16 @@ const Dashboard = () => {
     sessionStorage.clear();
     if (selectedRow !== undefined) {
       if (selectedRow.book_list.length > 0) {
-        sessionStorage.setItem('selectedStudent', JSON.stringify(selectedRow));
+        sessionStorage.setItem("selectedStudent", JSON.stringify(selectedRow));
         navigate("/app/checkin", { replace: true });
       }
     }
   };
 
   const checkOut = () => {
+    sessionStorage.clear();
     if (selectedRow !== undefined) {
+      sessionStorage.setItem("selectedStudent", JSON.stringify(selectedRow));
       navigate("/app/checkout", { studentId: selectedRow._id });
     }
   };
@@ -74,75 +72,60 @@ const Dashboard = () => {
       <Helmet>
         <title>Dashboard | ClassroomLib</title>
       </Helmet>
-      <Container
+
+      {isLoading ? (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            pt: 3,
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      ) : (
+        <Box style={{ height: 370, width: "100%" }}>
+          <DataGrid
+            rows={studentList}
+            columns={studentColumnNames}
+            rowHeight={30}
+            hideFooterPagination
+            hideFooter
+            headerHeight={40}
+            onRowClick={(selectedRow) => handleRowSelection(selectedRow)}
+          />
+        </Box>
+      )}
+      <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
-          height: "100%",
+          justifyContent: "flex-end",
         }}
       >
-        <Card>
-          <CardContent>
-            {isLoading ? (
-              <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "center",
-                  pt: 3,
-                }}
-              >
-                <CircularProgress />
-              </Box>
-            ) : (
-              <Box style={{ height: 300, width: "100%" }}>
-                <Box style={{ display: "flex", height: "100%" }}>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <DataGrid
-                      rows={studentList}
-                      columns={studentColumnNames}
-                      onRowClick={(selectedRow) =>
-                        handleRowSelection(selectedRow)
-                      }
-                    />
-                  </Box>
-                </Box>
-              </Box>
-            )}
-          </CardContent>
-          <Divider />
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              p: 2,
-            }}
-          >
-            <Button
-              color="primary"
-              disabled={isLoading}
-              fullWidth
-              size="large"
-              type="submit"
-              variant="contained"
-              onClick={checkIn}
-            >
-              Check In
-            </Button>
-            <Divider orientation="vertical" />
-            <Button
-              color="primary"
-              disabled={isLoading}
-              fullWidth
-              size="large"
-              type="submit"
-              variant="contained"
-              onClick={checkOut}
-            >
-              CheckOut
-            </Button>
-          </Box>
-        </Card>
-      </Container>
+        <Button
+          color="primary"
+          disabled={isLoading}
+          fullWidth
+          size="large"
+          type="submit"
+          variant="contained"
+          onClick={checkIn}
+        >
+          Check In
+        </Button>
+        <Divider orientation="vertical" />
+        <Button
+          color="primary"
+          disabled={isLoading}
+          fullWidth
+          size="large"
+          type="submit"
+          variant="contained"
+          onClick={checkOut}
+        >
+          CheckOut
+        </Button>
+      </Box>
     </>
   );
 };
