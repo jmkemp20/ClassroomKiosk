@@ -59,12 +59,11 @@ app.post("/studentsBooks", (req, res) => {
   Student.findOne({ _id: studentId, parent_id: parentId }, (err, result) => {
     if (err) return res.sendStatus(500);
     if (result) {
-      for (const i in result.book_list) {
+      for (let i = 0; i < result.book_list.length; i++) {
         bookId = mongoose.Types.ObjectId(result.book_list[i]);
         Book.findOne({ _id: bookId }, (err, book) => {
           if (err) throw err;
-          console.log(`Pushing book: ${book.title}`);
-          returnData.push(book);
+          returnData.push({ book, checkout_time: result.checkout_list[i] });
           if (result.book_list.length === Object.keys(returnData).length) {
             res.json(returnData);
           }

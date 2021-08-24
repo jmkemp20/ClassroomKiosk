@@ -23,7 +23,6 @@ const Dashboard = () => {
 
   useEffect(() => {
     setIsLoading(true);
-    console.log(linkUserId);
     fetch("/students", {
       method: "POST",
       body: JSON.stringify({ userId: linkUserId }),
@@ -41,7 +40,10 @@ const Dashboard = () => {
           };
           students.push(temp);
         }
-        setStudentList(students);
+        const sortedStudents = students.sort((a, b) =>
+          a.name < b.name ? -1 : 1
+        );
+        setStudentList(sortedStudents);
         setIsLoading(false);
       });
   }, []);
@@ -52,9 +54,12 @@ const Dashboard = () => {
   };
 
   const checkIn = () => {
+    sessionStorage.clear();
     if (selectedRow !== undefined) {
-      if (selectedRow.book_list.length > 0)
-        navigate("/app/checkin", { replace: true, student: selectedRow });
+      if (selectedRow.book_list.length > 0) {
+        sessionStorage.setItem('selectedStudent', JSON.stringify(selectedRow));
+        navigate("/app/checkin", { replace: true });
+      }
     }
   };
 
