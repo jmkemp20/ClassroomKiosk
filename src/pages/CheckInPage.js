@@ -66,16 +66,10 @@ const CheckInPage = () => {
         const studentBookList = [];
         for (let i = 0; i < data.length; i++) {
           const tempDate = new Date(parseInt(data[i].checkout_time) * 1000);
-          const calDate = `${tempDate.getMonth()}/${tempDate.getDay()}/${tempDate.getFullYear()}`;
-          const tempTime = `${
-            tempDate.getHours() > 12
-              ? `${tempDate.getHours() - 12}:${tempDate.getMinutes()} PM`
-              : `${tempDate.getHours()}:${tempDate.getMinutes()} AM`
-          }`;
           const temp = {
             id: i,
             ...data[i].book,
-            checkout_time: `${tempTime} - ${calDate}`,
+            checkout_time: `${tempDate.toLocaleString()}`,
           };
           studentBookList.push(temp);
         }
